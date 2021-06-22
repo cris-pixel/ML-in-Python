@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jun 18 09:29:46 2021
-
-@author: MHinojosaLee
-"""
+@ -0,0 +1,115 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Jun 18 09:29:46 2021
@@ -75,7 +70,7 @@ print(datafull['gold_status'].value_counts())
 print(datafull['prev_stay'].value_counts())
 print(datafull['divorce'].value_counts())
 print(datafull['married_cd'].value_counts())
-
+#%%Mode imputer instead of separate categories
 #I started with the separated categories, but then I decided a mode imputer for NaN
 #datafull['client_segment'] = pd.Categorical(datafull['client_segment'])
 #datafull['sect_empl'] = pd.Categorical(datafull['sect_empl'])
@@ -84,8 +79,6 @@ print(datafull['married_cd'].value_counts())
 #datafull['prev_stay'] = pd.Categorical(datafull['prev_stay'])
 #datafull['divorce'] = pd.Categorical(datafull['divorce'])
 
-#%%Mode imputer instead of separate categories... married_ic gave me problems. I used what he mentioned in class, using mode for categoricals, and mean for the rest. 
-#Married_ic is a bolean
 
 impute_mode = SimpleImputer (strategy='most_frequent')
 for cols in ['client_segment', "credit_use_ic", "gluten_ic", "lactose_ic","insurance_ic","marketing_permit", "presidential", "urban_ic", "prev_all_in_stay", "shop_use", 
@@ -107,7 +100,7 @@ print(datafull.shape)
 datafull.dropna(thresh = datafull.shape[1]*0.3, axis = 0, inplace = True)
 print(datafull.shape)
 
-#%%Imputation: this time with the mean
+#%%Imputation
 print(datafull.isnull().sum().sum())
 datafull.fillna(datafull.mean(), inplace=True)
 print(datafull.isnull().sum().sum())
@@ -116,4 +109,8 @@ print(datafull.isnull().sum().sum())
 scaler = StandardScaler()
 datafull2 = pd.DataFrame(scaler.fit_transform(datafull))
 datafull2.columns = datafull.columns
-#And here I have an error... It is caused by having gender not coded as 0 and 1
+#%% Separate the test and the train sets
+data_train = pd.concat([data_train[['outcome_profit', 'outcome_damage_inc', 'outcome_damage_amount']],datafull2[0:5000]], axis=1)
+print(data_train.shape)
+score = datafull2[5000:5500]
+score.shape
